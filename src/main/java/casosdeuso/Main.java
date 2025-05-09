@@ -8,6 +8,7 @@ import java.util.List;
 import persistencia.ComponenteDAO;
 import persistencia.CotizacionDAO;
 import persistencia.CotizacionDTO;
+import persistencia.DatabaseConnection;
 import persistencia.DetalleCotizacionDTO;
 import persistencia.DiscoDuroDAO;
 import persistencia.DiscoDuroDTO;
@@ -20,11 +21,12 @@ import persistencia.TarjetaVideoDTO;
 
 public class Main {
     public static void main(String[] args) {
-        String url = "jdbc:mysql://localhost:3306/cotizador2025";
-        String user = "root";
-        String password = "myOdito77";
+        //String url = "jdbc:mysql://localhost:3306/cotizador2025";
+        //String user = "root";
+        //String password = "myOdito77";
 
-        try (Connection conexion = DriverManager.getConnection(url, user, password)) {
+        //try (Connection conexion = DriverManager.getConnection(url, user, password)) {
+        try (Connection conexion = DatabaseConnection.getConnection()) {
             // 1. Crear instancias de los DAOs necesarios
             ComponenteDAO componenteDAO = new ComponenteDAO(conexion);
             DiscoDuroDAO discoDuroDAO = new DiscoDuroDAO(conexion);
