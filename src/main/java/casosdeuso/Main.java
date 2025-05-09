@@ -115,7 +115,60 @@ public class Main {
     private static void crearComponentesDePrueba(ComponenteDAO componenteDAO, DiscoDuroDAO discoDuroDAO,
                                                MonitorDAO monitorDAO, TarjetaVideoDAO tarjetaVideoDAO,
                                                PCDAO pcDAO) throws SQLException {
-        // ... (implementación existente sin cambios) ...
+    	 // Verificar si ya existen los componentes para no duplicarlos
+        if (componenteDAO.obtenerPorId("dd001") == null) {
+            // Crear disco duro
+            DiscoDuroDTO disco = new DiscoDuroDTO(
+                "dd001", "SSD 1TB", "Samsung", "870 EVO", 80.00, 129.99, "1TB SSD"
+            );
+            discoDuroDAO.insertar(disco);
+        }
+
+        if (componenteDAO.obtenerPorId("mon001") == null) {
+            // Crear monitor
+            MonitorDTO monitor = new MonitorDTO(
+                "mon001", "Monitor 27\" 4K", "LG", "27UL850", 300.00, 499.99
+            );
+            monitorDAO.crearMonitor(monitor);
+        }
+
+        if (componenteDAO.obtenerPorId("tv001") == null) {
+            // Crear tarjeta de video
+            TarjetaVideoDTO tarjeta = new TarjetaVideoDTO(
+                "tv001", "RTX 3080", "NVIDIA", "RTX 3080 FE", 700.00, 999.99, "10GB GDDR6X"
+            );
+            tarjetaVideoDAO.crearTarjetaVideo(tarjeta);
+        }
+
+        if (componenteDAO.obtenerPorId("pc001") == null) {
+            // Crear PC
+            PCDTO pc = new PCDTO();
+            pc.setId("pc001");
+            pc.setDescripcion("PC Gamer Premium");
+            pc.setMarca("Custom");
+            pc.setModelo("2023");
+            
+            // Agregar componentes a la PC
+            DiscoDuroDTO disco = (DiscoDuroDTO) componenteDAO.obtenerPorId("dd001");
+            MonitorDTO monitor = (MonitorDTO) componenteDAO.obtenerPorId("mon001");
+            TarjetaVideoDTO tarjeta = (TarjetaVideoDTO) componenteDAO.obtenerPorId("tv001");
+            
+            if (disco != null) pc.agregarDiscoDuro(disco, 1);
+            if (monitor != null) pc.agregarMonitor(monitor, 1);
+            if (tarjeta != null) pc.agregarTarjetaVideo(tarjeta, 1);
+            
+            // Calcular precios
+            pc.setCosto(pc.getDiscosDuros().stream().mapToDouble(d -> d.getCosto() * d.getCantidad()).sum() +
+                       pc.getMonitores().stream().mapToDouble(m -> m.getCosto() * m.getCantidad()).sum() +
+                       pc.getTarjetasVideo().stream().mapToDouble(t -> t.getCosto() * t.getCantidad()).sum());
+            
+            pc.setPrecioBase(pc.getDiscosDuros().stream().mapToDouble(d -> d.getPrecioBase() * d.getCantidad()).sum() +
+                           pc.getMonitores().stream().mapToDouble(m -> m.getPrecioBase() * m.getCantidad()).sum() +
+                           pc.getTarjetasVideo().stream().mapToDouble(t -> t.getPrecioBase() * t.getCantidad()).sum());
+            
+            // Guardar PC
+            pcDAO.guardarPC(pc);
+        }
     }
 
     private static void imprimirCotizacion(CotizacionDTO cotizacion) {
